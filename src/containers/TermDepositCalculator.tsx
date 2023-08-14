@@ -1,5 +1,8 @@
 import { useState } from "react"
 import { Input } from "../components/Input"
+import { calculateTermDepositInterest } from "../util/InterestCalculator"
+import { InterestFrequency } from "../types"
+import numeral from "numeral"
 
 // TODO: consider Formik to reduce value-setting plumbing
 
@@ -10,19 +13,15 @@ type FormState = {
   interestFrequency: InterestFrequency
 }
 
-enum InterestFrequency {
-  MONTHLY = "MONTHLY",
-  QUARTERLY = "QUARTERLY",
-  ANNUALLY = "ANNUALLY",
-  AT_MATURITY = "AT_MATURITY",
-}
-
-const InterestFrequencyOptions: Record<InterestFrequency, string> = {
+// TODO: move to a central helper
+const InterestFrequencyLabels: Record<InterestFrequency, string> = {
   [InterestFrequency.MONTHLY]: "Monthly",
   [InterestFrequency.QUARTERLY]: "Quarterly",
   [InterestFrequency.ANNUALLY]: "Annually",
   [InterestFrequency.AT_MATURITY]: "At Maturity",
 }
+
+const formatMoney = (value: number) => numeral(value).format("$0,0.00")
 
 export const TermDepositCalculator = () => {
   const [formState, setFormStateValue] = useState<FormState>({
@@ -34,6 +33,15 @@ export const TermDepositCalculator = () => {
 
   const setValue = (key: keyof FormState, value: FormState[keyof FormState]) =>
     setFormStateValue((prev) => ({ ...prev, [key]: value }))
+
+  const totalInterestEarned = calculateTermDepositInterest({
+    principal: formState.deposit,
+    interestRate: formState.interestRate,
+    interestPaid: formState.interestFrequency,
+    termInYears: formState.termYears,
+  })
+
+  const finalBalance = formState.deposit + totalInterestEarned
 
   return (
     <div>
@@ -85,7 +93,7 @@ export const TermDepositCalculator = () => {
           }
           className="block w-full mt-1"
         >
-          {Object.entries(InterestFrequencyOptions).map(([value, text]) => (
+          {Object.entries(InterestFrequencyLabels).map(([value, text]) => (
             <option key={value} value={value}>
               {text}
             </option>
@@ -95,12 +103,16 @@ export const TermDepositCalculator = () => {
 
       <div className="mt-2">
         <span className="block text-gray-700">Final Balance</span>
-        <span className="block font-bold text-xl">$TODO</span>
+        <span className="block font-bold text-xl">
+          {formatMoney(finalBalance)}
+        </span>
       </div>
 
       <div className="mt-2">
         <span className="block text-gray-700">Interest Earned</span>
-        <span className="block font-bold text-xl">$TODO</span>
+        <span className="block font-bold text-xl">
+          {formatMoney(totalInterestEarned)}
+        </span>
       </div>
     </div>
   )
