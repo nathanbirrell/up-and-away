@@ -1,6 +1,8 @@
 # Term deposit calculator UI
 
-This is a simple user-interface for a term deposit calculator built with React, Vite, Typescript and Tailwind CSS.
+A simple user-interface for a term deposit calculator built with React, Vite, Typescript and Tailwind CSS.
+
+![Screenshot](docs/img/screenshot.jpg)
 
 ## Get Started
 

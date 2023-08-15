@@ -1,6 +1,6 @@
+import { expect, test } from "vitest"
 import { InterestFrequency } from "../types"
-import { calculateTermDepositInterest } from "./InterestCalculator"
-import { test, expect } from "@jest/globals"
+import { calculateTermDepositInterest } from "./InterestCalculators"
 
 test("calculates interest paid at maturity correctly", () => {
   expect(

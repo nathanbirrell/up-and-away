@@ -1,6 +1,6 @@
 import { useState } from "react"
 import { Input } from "../components/Input"
-import { calculateTermDepositInterest } from "../util/InterestCalculator"
+import { calculateTermDepositInterest } from "../util/InterestCalculators"
 import { InterestFrequency } from "../types"
 import numeral from "numeral"
 
@@ -59,6 +59,7 @@ export const TermDepositCalculator = () => {
         />
       </label>
 
+      {/* TODO: add a formatter to present this value as a readable percentage (ie: 1.1% instead of 0.011) */}
       <label className="block" htmlFor="interestRate">
         <span className="text-gray-700">Interest rate (%)</span>
 
