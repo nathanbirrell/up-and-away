@@ -2,8 +2,8 @@ import { useState } from "react"
 import { Input } from "../components/Input"
 import { calculateTermDepositInterest } from "../util/InterestCalculators"
 import { InterestFrequency } from "../types"
-import numeral from "numeral"
 import { TERM_DEPOSIT_COPY } from "../copy"
+import { formatMoney } from "../util/Currency"
 
 // TODO: consider Formik/react-hook-form to reduce value-setting plumbing and easy validation
 
@@ -13,8 +13,6 @@ type FormState = {
   interestRate: number
   interestFrequency: InterestFrequency
 }
-
-const formatMoney = (value: number) => numeral(value).format("$0,0.00")
 
 export const TermDepositCalculator = () => {
   const [formState, setFormStateValue] = useState<FormState>({
