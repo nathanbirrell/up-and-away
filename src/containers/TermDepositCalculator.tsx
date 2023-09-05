@@ -3,22 +3,15 @@ import { Input } from "../components/Input"
 import { calculateTermDepositInterest } from "../util/InterestCalculators"
 import { InterestFrequency } from "../types"
 import numeral from "numeral"
+import { TERM_DEPOSIT_COPY } from "../copy"
 
-// TODO: consider Formik to reduce value-setting plumbing
+// TODO: consider Formik/react-hook-form to reduce value-setting plumbing and easy validation
 
 type FormState = {
   deposit: number
-  interestRate: number
   termYears: number
+  interestRate: number
   interestFrequency: InterestFrequency
-}
-
-// TODO: move to a central helper
-const InterestFrequencyLabels: Record<InterestFrequency, string> = {
-  [InterestFrequency.MONTHLY]: "Monthly",
-  [InterestFrequency.QUARTERLY]: "Quarterly",
-  [InterestFrequency.ANNUALLY]: "Annually",
-  [InterestFrequency.AT_MATURITY]: "At Maturity",
 }
 
 const formatMoney = (value: number) => numeral(value).format("$0,0.00")
@@ -26,7 +19,7 @@ const formatMoney = (value: number) => numeral(value).format("$0,0.00")
 export const TermDepositCalculator = () => {
   const [formState, setFormStateValue] = useState<FormState>({
     deposit: 10000,
-    interestRate: 0.011, // 1.1%
+    interestRate: 1.1, // 1.1%
     termYears: 3,
     interestFrequency: InterestFrequency.AT_MATURITY,
   })
@@ -36,7 +29,7 @@ export const TermDepositCalculator = () => {
 
   const totalInterestEarned = calculateTermDepositInterest({
     principal: formState.deposit,
-    interestRate: formState.interestRate,
+    interestRate: formState.interestRate / 100,
     interestPaid: formState.interestFrequency,
     termInYears: formState.termYears,
   })
@@ -48,12 +41,14 @@ export const TermDepositCalculator = () => {
       <h1 className="">Term deposit calculator</h1>
 
       <label className="block" htmlFor="deposit">
-        <span className="text-gray-700">Initial deposit ($)</span>
+        <span className="text-gray-700">
+          {TERM_DEPOSIT_COPY.Fields.Deposit.Label}
+        </span>
 
         <Input
           id="deposit"
           name="deposit"
-          placeholder="For example, $10,000"
+          placeholder={TERM_DEPOSIT_COPY.Fields.Deposit.Placeholder}
           value={formState.deposit}
           onChange={(e) => setValue("deposit", Number(e.target.value))}
         />
@@ -61,18 +56,24 @@ export const TermDepositCalculator = () => {
 
       {/* TODO: add a formatter to present this value as a readable percentage (ie: 1.1% instead of 0.011) */}
       <label className="block" htmlFor="interestRate">
-        <span className="text-gray-700">Interest rate (%)</span>
+        <span className="text-gray-700">
+          {TERM_DEPOSIT_COPY.Fields.InterestRate.Label}
+        </span>
 
         <Input
           id="interestRate"
           name="interestRate"
           value={formState.interestRate}
+          type="number"
+          step=".01"
           onChange={(e) => setValue("interestRate", Number(e.target.value))}
         />
       </label>
 
       <label className="block" htmlFor="termYears">
-        <span className="text-gray-700">Investment term (years)</span>
+        <span className="text-gray-700">
+          {TERM_DEPOSIT_COPY.Fields.Term.Label}
+        </span>
 
         <Input
           id="termYears"
@@ -83,7 +84,9 @@ export const TermDepositCalculator = () => {
       </label>
 
       <label className="block" htmlFor="interestFrequency">
-        <span className="text-gray-700">Interest paid</span>
+        <span className="text-gray-700">
+          {TERM_DEPOSIT_COPY.Fields.InterestFrequency.Label}
+        </span>
 
         <select
           id="interestFrequency"
@@ -94,7 +97,9 @@ export const TermDepositCalculator = () => {
           }
           className="block w-full mt-1"
         >
-          {Object.entries(InterestFrequencyLabels).map(([value, text]) => (
+          {Object.entries(
+            TERM_DEPOSIT_COPY.Fields.InterestFrequency.InterestFrequencyLabels,
+          ).map(([value, text]) => (
             <option key={value} value={value}>
               {text}
             </option>
@@ -103,14 +108,18 @@ export const TermDepositCalculator = () => {
       </label>
 
       <div className="mt-2">
-        <span className="block text-gray-700">Final Balance</span>
+        <span className="block text-gray-700">
+          {TERM_DEPOSIT_COPY.FinalBalance}
+        </span>
         <span className="block font-bold text-xl">
           {formatMoney(finalBalance)}
         </span>
       </div>
 
       <div className="mt-2">
-        <span className="block text-gray-700">Interest Earned</span>
+        <span className="block text-gray-700">
+          {TERM_DEPOSIT_COPY.InterestEarned}
+        </span>
         <span className="block font-bold text-xl">
           {formatMoney(totalInterestEarned)}
         </span>
