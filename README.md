@@ -11,14 +11,14 @@ A simple user-interface for a term deposit calculator built with React, Vite, Ty
 
 ## Linting and formatting
 
-For linting and formatting, we use ESLint and Prettier.
+For linting and formatting, this project uses ESLint and Prettier.
 
 `yarn run lint`
 `yarn run format`
 
 ## Testing
 
-For testing we are using Jest.
+For testing this project uses Jest.
 
 `yarn run test`
 
