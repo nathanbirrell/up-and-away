@@ -6,6 +6,7 @@ import { TERM_DEPOSIT_COPY } from "../copy"
 import { formatMoney } from "../util/Currency"
 import { ValidationError } from "../components/ValidationError"
 import { inRange } from "lodash"
+import { FormField } from "../components/FormField"
 
 // TODO: consider Formik/react-hook-form to reduce value-setting plumbing and easy validation
 
@@ -63,53 +64,36 @@ export const TermDepositCalculator = () => {
       <h1 className="">{TERM_DEPOSIT_COPY.Title}</h1>
 
       <form>
-        <label className="block" htmlFor="deposit">
-          <span className="text-gray-700">
-            {TERM_DEPOSIT_COPY.Fields.Deposit.Label}
-          </span>
-
-          <Input
-            id="deposit"
-            name="deposit"
-            placeholder={TERM_DEPOSIT_COPY.Fields.Deposit.Placeholder}
-            value={formState.deposit}
-            onChange={(e) => setValue("deposit", Number(e.target.value))}
-          />
-        </label>
+        <FormField
+          id="deposit"
+          label={TERM_DEPOSIT_COPY.Fields.Deposit.Label}
+          placeholder={TERM_DEPOSIT_COPY.Fields.Deposit.Placeholder}
+          value={formState.deposit}
+          onChange={(e) => setValue("deposit", Number(e.target.value))}
+        />
 
         {/* TODO: add a formatter to present this value as a readable percentage (ie: 1.1% instead of 0.011) */}
-        <label className="block" htmlFor="interestRate">
-          <span className="text-gray-700">
-            {TERM_DEPOSIT_COPY.Fields.InterestRate.Label}
-          </span>
 
-          <Input
-            id="interestRate"
-            name="interestRate"
-            value={formState.interestRate}
-            type="number"
-            step=".01"
-            onChange={(e) => setValue("interestRate", Number(e.target.value))}
-          />
-        </label>
+        <FormField
+          id="interestRate"
+          label={TERM_DEPOSIT_COPY.Fields.InterestRate.Label}
+          value={formState.interestRate}
+          type="number"
+          step=".01"
+          onChange={(e) => setValue("interestRate", Number(e.target.value))}
+        />
         {errors.interestRate && (
           <ValidationError htmlFor="interestRate">
             {errors.interestRate}
           </ValidationError>
         )}
 
-        <label className="block" htmlFor="termYears">
-          <span className="text-gray-700">
-            {TERM_DEPOSIT_COPY.Fields.Term.Label}
-          </span>
-
-          <Input
-            id="termYears"
-            name="termYears"
-            value={formState.termYears}
-            onChange={(e) => setValue("termYears", Number(e.target.value))}
-          />
-        </label>
+        <FormField
+          id="termYears"
+          label={TERM_DEPOSIT_COPY.Fields.Term.Label}
+          value={formState.termYears}
+          onChange={(e) => setValue("termYears", Number(e.target.value))}
+        />
 
         <label className="block" htmlFor="interestFrequency">
           <span className="text-gray-700">
