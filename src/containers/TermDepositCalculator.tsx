@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react"
-import { Input } from "../components/Input"
 import { calculateTermDepositInterest } from "../util/InterestCalculators"
 import { InterestFrequency } from "../types"
 import { TERM_DEPOSIT_COPY } from "../copy"
@@ -53,7 +52,7 @@ export const TermDepositCalculator = () => {
   const totalInterestEarned = calculateTermDepositInterest({
     principal: formState.deposit,
     interestRate: formState.interestRate / 100,
-    interestPaid: formState.interestFrequency,
+    interestFrequency: formState.interestFrequency,
     termInYears: formState.termYears,
   })
 

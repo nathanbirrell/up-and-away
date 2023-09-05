@@ -7,7 +7,7 @@ test("calculates interest paid at maturity correctly", () => {
     calculateTermDepositInterest({
       principal: 10000,
       interestRate: 0.011,
-      interestPaid: InterestFrequency.AT_MATURITY,
+      interestFrequency: InterestFrequency.AT_MATURITY,
       termInYears: 3,
     }).toFixed(2),
   ).toEqual("330.00")
@@ -15,7 +15,7 @@ test("calculates interest paid at maturity correctly", () => {
     calculateTermDepositInterest({
       principal: 10000,
       interestRate: 0.021,
-      interestPaid: InterestFrequency.AT_MATURITY,
+      interestFrequency: InterestFrequency.AT_MATURITY,
       termInYears: 5,
     }).toFixed(2),
   ).toEqual("1050.00")
@@ -26,7 +26,7 @@ test("calculates interest paid monthly correctly", () => {
     calculateTermDepositInterest({
       principal: 10000,
       interestRate: 0.011,
-      interestPaid: InterestFrequency.MONTHLY,
+      interestFrequency: InterestFrequency.MONTHLY,
       termInYears: 3,
     }).toFixed(2),
   ).toEqual("335.35")
@@ -37,7 +37,7 @@ test("calculates interest paid annually correctly", () => {
     calculateTermDepositInterest({
       principal: 10000,
       interestRate: 0.011,
-      interestPaid: InterestFrequency.ANNUALLY,
+      interestFrequency: InterestFrequency.ANNUALLY,
       termInYears: 3,
     }).toFixed(2),
   ).toEqual("333.64")
@@ -48,7 +48,7 @@ test("calculates interest paid quarterly correctly", () => {
     calculateTermDepositInterest({
       principal: 10000,
       interestRate: 0.011,
-      interestPaid: InterestFrequency.QUARTERLY,
+      interestFrequency: InterestFrequency.QUARTERLY,
       termInYears: 3,
     }).toFixed(2),
   ).toEqual("335.04")

@@ -7,23 +7,34 @@ const InterestEventsPerYear = {
   [InterestFrequency.MONTHLY]: 12,
 }
 
-export const calculateTermDepositInterest = ({
-  principal,
-  interestRate,
-  interestPaid,
-  termInYears,
-}: {
+type TermDepositInterestArgs = {
   principal: number
   // percentage in decimal form (0-1)
   interestRate: number
-  interestPaid: InterestFrequency
+  interestFrequency: InterestFrequency
   termInYears: number
-}) => {
-  if (interestPaid == InterestFrequency.AT_MATURITY) {
+}
+
+/**
+ * Calculate the interest earned on a term deposit, given:
+ *    - principal: the initial deposit amount
+ *    - interestRate: a percentage in decimal form (0-1)
+ *    - interestFrequency: number of times per year interest is paid out
+ *    - termInYears: the total duration of the term deposit in years
+ *
+ * @returns total interest earned on term deposit
+ */
+export const calculateTermDepositInterest = ({
+  principal,
+  interestRate,
+  interestFrequency,
+  termInYears,
+}: TermDepositInterestArgs) => {
+  if (interestFrequency == InterestFrequency.AT_MATURITY) {
     return principal * interestRate * termInYears
   }
 
-  const interestEventsPerYear = InterestEventsPerYear[interestPaid]
+  const interestEventsPerYear = InterestEventsPerYear[interestFrequency]
 
   return (
     principal *
