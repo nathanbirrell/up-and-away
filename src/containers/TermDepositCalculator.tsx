@@ -1,9 +1,11 @@
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { Input } from "../components/Input"
 import { calculateTermDepositInterest } from "../util/InterestCalculators"
 import { InterestFrequency } from "../types"
 import { TERM_DEPOSIT_COPY } from "../copy"
 import { formatMoney } from "../util/Currency"
+import { ValidationError } from "../components/ValidationError"
+import { inRange } from "lodash"
 
 // TODO: consider Formik/react-hook-form to reduce value-setting plumbing and easy validation
 
@@ -14,16 +16,38 @@ type FormState = {
   interestFrequency: InterestFrequency
 }
 
+type FormValidationState = Partial<Record<keyof FormState, string | undefined>>
+
+const INITIAL_VALUES: FormState = {
+  deposit: 10000,
+  interestRate: 1.1, // 1.1%
+  termYears: 3,
+  interestFrequency: InterestFrequency.AT_MATURITY,
+}
+
+const VALIDATORS: Partial<
+  Record<keyof FormState, Array<(value: any) => string | undefined>>
+> = {
+  interestRate: [
+    (value) =>
+      inRange(value, 0, 20)
+        ? undefined
+        : "Interest Rate is usually a percentage between 0-20%",
+  ],
+}
+
 export const TermDepositCalculator = () => {
-  const [formState, setFormStateValue] = useState<FormState>({
-    deposit: 10000,
-    interestRate: 1.1, // 1.1%
-    termYears: 3,
-    interestFrequency: InterestFrequency.AT_MATURITY,
-  })
+  const [formState, setFormStateValue] = useState<FormState>(INITIAL_VALUES)
+
+  const [errors, setFormErrors] = useState<FormValidationState>({})
 
   const setValue = (key: keyof FormState, value: FormState[keyof FormState]) =>
     setFormStateValue((prev) => ({ ...prev, [key]: value }))
+
+  // Validate on change as this is a live calculator
+  useEffect(() => {
+    setFormErrors(validateForm(formState))
+  }, [formState, setFormErrors])
 
   const totalInterestEarned = calculateTermDepositInterest({
     principal: formState.deposit,
@@ -36,74 +60,82 @@ export const TermDepositCalculator = () => {
 
   return (
     <div>
-      <h1 className="">Term deposit calculator</h1>
+      <h1 className="">{TERM_DEPOSIT_COPY.Title}</h1>
 
-      <label className="block" htmlFor="deposit">
-        <span className="text-gray-700">
-          {TERM_DEPOSIT_COPY.Fields.Deposit.Label}
-        </span>
+      <form>
+        <label className="block" htmlFor="deposit">
+          <span className="text-gray-700">
+            {TERM_DEPOSIT_COPY.Fields.Deposit.Label}
+          </span>
 
-        <Input
-          id="deposit"
-          name="deposit"
-          placeholder={TERM_DEPOSIT_COPY.Fields.Deposit.Placeholder}
-          value={formState.deposit}
-          onChange={(e) => setValue("deposit", Number(e.target.value))}
-        />
-      </label>
+          <Input
+            id="deposit"
+            name="deposit"
+            placeholder={TERM_DEPOSIT_COPY.Fields.Deposit.Placeholder}
+            value={formState.deposit}
+            onChange={(e) => setValue("deposit", Number(e.target.value))}
+          />
+        </label>
 
-      {/* TODO: add a formatter to present this value as a readable percentage (ie: 1.1% instead of 0.011) */}
-      <label className="block" htmlFor="interestRate">
-        <span className="text-gray-700">
-          {TERM_DEPOSIT_COPY.Fields.InterestRate.Label}
-        </span>
+        {/* TODO: add a formatter to present this value as a readable percentage (ie: 1.1% instead of 0.011) */}
+        <label className="block" htmlFor="interestRate">
+          <span className="text-gray-700">
+            {TERM_DEPOSIT_COPY.Fields.InterestRate.Label}
+          </span>
 
-        <Input
-          id="interestRate"
-          name="interestRate"
-          value={formState.interestRate}
-          type="number"
-          step=".01"
-          onChange={(e) => setValue("interestRate", Number(e.target.value))}
-        />
-      </label>
+          <Input
+            id="interestRate"
+            name="interestRate"
+            value={formState.interestRate}
+            type="number"
+            step=".01"
+            onChange={(e) => setValue("interestRate", Number(e.target.value))}
+          />
+        </label>
+        {errors.interestRate && (
+          <ValidationError htmlFor="interestRate">
+            {errors.interestRate}
+          </ValidationError>
+        )}
 
-      <label className="block" htmlFor="termYears">
-        <span className="text-gray-700">
-          {TERM_DEPOSIT_COPY.Fields.Term.Label}
-        </span>
+        <label className="block" htmlFor="termYears">
+          <span className="text-gray-700">
+            {TERM_DEPOSIT_COPY.Fields.Term.Label}
+          </span>
 
-        <Input
-          id="termYears"
-          name="termYears"
-          value={formState.termYears}
-          onChange={(e) => setValue("termYears", Number(e.target.value))}
-        />
-      </label>
+          <Input
+            id="termYears"
+            name="termYears"
+            value={formState.termYears}
+            onChange={(e) => setValue("termYears", Number(e.target.value))}
+          />
+        </label>
 
-      <label className="block" htmlFor="interestFrequency">
-        <span className="text-gray-700">
-          {TERM_DEPOSIT_COPY.Fields.InterestFrequency.Label}
-        </span>
+        <label className="block" htmlFor="interestFrequency">
+          <span className="text-gray-700">
+            {TERM_DEPOSIT_COPY.Fields.InterestFrequency.Label}
+          </span>
 
-        <select
-          id="interestFrequency"
-          name="interestFrequency"
-          value={formState.interestFrequency}
-          onChange={(e) =>
-            setValue("interestFrequency", e.target.value as InterestFrequency)
-          }
-          className="block w-full mt-1"
-        >
-          {Object.entries(
-            TERM_DEPOSIT_COPY.Fields.InterestFrequency.InterestFrequencyLabels,
-          ).map(([value, text]) => (
-            <option key={value} value={value}>
-              {text}
-            </option>
-          ))}
-        </select>
-      </label>
+          <select
+            id="interestFrequency"
+            name="interestFrequency"
+            value={formState.interestFrequency}
+            onChange={(e) =>
+              setValue("interestFrequency", e.target.value as InterestFrequency)
+            }
+            className="block w-full mt-1"
+          >
+            {Object.entries(
+              TERM_DEPOSIT_COPY.Fields.InterestFrequency
+                .InterestFrequencyLabels,
+            ).map(([value, text]) => (
+              <option key={value} value={value}>
+                {text}
+              </option>
+            ))}
+          </select>
+        </label>
+      </form>
 
       <div className="mt-2">
         <span className="block text-gray-700">
@@ -124,4 +156,26 @@ export const TermDepositCalculator = () => {
       </div>
     </div>
   )
+}
+
+// TODO: abstract this out into a form-generic validator which takes a FormState type argument
+//          ... or use a form library!
+const validateForm = (values: FormState): FormValidationState => {
+  const errors: FormValidationState = {}
+
+  Object.entries(VALIDATORS)
+    // skip fields without validation
+    .filter(([_, validator]) => !!validator)
+    .forEach(([key, validators]) => {
+      // run each validator
+      validators.some((validator) => {
+        const error = validator(values[key as keyof FormState])
+        if (error) {
+          errors[key as keyof FormState] = error
+          return true
+        }
+      })
+    })
+
+  return errors
 }
