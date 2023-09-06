@@ -1,6 +1,6 @@
 import { Input } from "./Input"
 
-export const FormField = ({
+export const TextInput = ({
   id,
   label,
   ...rest

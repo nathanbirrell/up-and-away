@@ -5,7 +5,8 @@ import { TERM_DEPOSIT_COPY } from "../copy"
 import { formatMoney } from "../util/Currency"
 import { ValidationError } from "../components/ValidationError"
 import { inRange } from "lodash"
-import { FormField } from "../components/FormField"
+import { TextInput } from "../components/TextInput"
+import { Select } from "../components/Select"
 
 // TODO: consider Formik/react-hook-form to reduce value-setting plumbing and easy validation
 
@@ -63,7 +64,7 @@ export const TermDepositCalculator = () => {
       <h1 className="">{TERM_DEPOSIT_COPY.Title}</h1>
 
       <form>
-        <FormField
+        <TextInput
           id="deposit"
           label={TERM_DEPOSIT_COPY.Fields.Deposit.Label}
           placeholder={TERM_DEPOSIT_COPY.Fields.Deposit.Placeholder}
@@ -73,7 +74,7 @@ export const TermDepositCalculator = () => {
 
         {/* TODO: add a formatter to present this value as a readable percentage (ie: 1.1% instead of 0.011) */}
 
-        <FormField
+        <TextInput
           id="interestRate"
           label={TERM_DEPOSIT_COPY.Fields.InterestRate.Label}
           value={formState.interestRate}
@@ -87,37 +88,29 @@ export const TermDepositCalculator = () => {
           </ValidationError>
         )}
 
-        <FormField
+        <TextInput
           id="termYears"
           label={TERM_DEPOSIT_COPY.Fields.Term.Label}
           value={formState.termYears}
           onChange={(e) => setValue("termYears", Number(e.target.value))}
         />
 
-        <label className="block" htmlFor="interestFrequency">
-          <span className="text-gray-700">
-            {TERM_DEPOSIT_COPY.Fields.InterestFrequency.Label}
-          </span>
-
-          <select
-            id="interestFrequency"
-            name="interestFrequency"
-            value={formState.interestFrequency}
-            onChange={(e) =>
-              setValue("interestFrequency", e.target.value as InterestFrequency)
-            }
-            className="block w-full mt-1"
-          >
-            {Object.entries(
-              TERM_DEPOSIT_COPY.Fields.InterestFrequency
-                .InterestFrequencyLabels,
-            ).map(([value, text]) => (
-              <option key={value} value={value}>
-                {text}
-              </option>
-            ))}
-          </select>
-        </label>
+        <Select
+          id="interestFrequency"
+          label={TERM_DEPOSIT_COPY.Fields.InterestFrequency.Label}
+          value={formState.interestFrequency}
+          onChange={(e) =>
+            setValue("interestFrequency", e.target.value as InterestFrequency)
+          }
+        >
+          {Object.entries(
+            TERM_DEPOSIT_COPY.Fields.InterestFrequency.InterestFrequencyLabels,
+          ).map(([value, text]) => (
+            <option key={value} value={value}>
+              {text}
+            </option>
+          ))}
+        </Select>
       </form>
 
       <div className="mt-2">
